@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.cleanup.todoc"
     compileSdk 34
+
     defaultConfig {
         applicationId "com.cleanup.todoc"
         minSdk 21
@@ -29,10 +30,18 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation "androidx.room:room-runtime:2.5.2"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    annotationProcessor "androidx.room:room-compiler:2.5.2"
+
+    // UNIT TEST
     testImplementation 'junit:junit:4.13.2'
+
+    // INSTRUMENTATION TEST
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
 
-    implementation 'com.google.android.material:material:1.10.0'
 }

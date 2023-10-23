@@ -1,10 +1,12 @@
-package com.cleanup.todoc.model;
+package com.cleanup.todoc.data.models;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.cleanup.todoc.data.repositories.ProjectRepository;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * <p>Model for the tasks of the application.</p>
@@ -12,6 +14,7 @@ import java.util.Comparator;
  * @author Gaëtan HERFRAY
  */
 public class Task {
+
     /**
      * The unique identifier of the task
      */
@@ -69,6 +72,15 @@ public class Task {
     }
 
     /**
+     * Returns the unique identifier of the project associated to the task.
+     *
+     * @return the unique identifier of the project associated to the task
+     */
+    public long getProjectId() {
+        return projectId;
+    }
+
+    /**
      * Sets the unique identifier of the project associated to the task.
      *
      * @param projectId the unique identifier of the project associated to the task to set
@@ -84,7 +96,8 @@ public class Task {
      */
     @Nullable
     public Project getProject() {
-        return Project.getProjectById(projectId);
+        ProjectRepository projectRepository = new ProjectRepository();
+        return projectRepository.getById(projectId);
     }
 
     /**
@@ -107,12 +120,34 @@ public class Task {
     }
 
     /**
+     * Returns the timestamp when the task has been created.
+     *
+     * @return the timestamp when the task has been created
+     */
+    public long getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    /**
      * Sets the timestamp when the task has been created.
      *
      * @param creationTimestamp the timestamp when the task has been created to set
      */
     private void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && projectId == task.projectId && creationTimestamp == task.creationTimestamp && name.equals(task.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, projectId, name, creationTimestamp);
     }
 
     /**
