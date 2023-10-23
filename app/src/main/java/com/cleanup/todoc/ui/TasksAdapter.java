@@ -39,12 +39,12 @@ public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder>
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_task, viewGroup, false);
-        return new TaskViewHolder(view);
+        return new TaskViewHolder(view,mDeleteTaskListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        holder.bind(getItem(position),mDeleteTaskListener);
+        holder.bind(getItem(position));
     }
 
     /**
@@ -89,32 +89,30 @@ public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder>
          * Instantiates a new TaskViewHolder.
          *
          * @param itemView the view of the task item
+         * @param deleteTaskListener the listener for when a task needs to be deleted to set
          */
-        TaskViewHolder(@NonNull View itemView) {
+        TaskViewHolder(@NonNull View itemView, @NonNull DeleteTaskListener deleteTaskListener) {
             super(itemView);
+
             imgProject = itemView.findViewById(R.id.img_project);
             lblTaskName = itemView.findViewById(R.id.lbl_task_name);
             lblProjectName = itemView.findViewById(R.id.lbl_project_name);
             imgDelete = itemView.findViewById(R.id.img_delete);
+
+            imgDelete.setOnClickListener(view -> {
+                final Object tag = view.getTag();
+                if (tag instanceof Task) {
+                    deleteTaskListener.onDeleteTask((Task) tag);
+                }
+            });
         }
 
         /**
          * Binds a task to the item view.
          *
          * @param task the task to bind in the item view
-         * @param deleteTaskListener the listener for when a task needs to be deleted to set
          */
-        void bind(Task task, @NonNull DeleteTaskListener deleteTaskListener) {
-
-            imgDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Object tag = view.getTag();
-                    if (tag instanceof Task) {
-                        deleteTaskListener.onDeleteTask((Task) tag);
-                    }
-                }
-            });
+        void bind(Task task) {
 
             lblTaskName.setText(task.getName());
             imgDelete.setTag(task);
