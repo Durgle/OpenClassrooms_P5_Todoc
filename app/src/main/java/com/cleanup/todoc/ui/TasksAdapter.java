@@ -21,7 +21,7 @@ import com.cleanup.todoc.data.models.Task;
  *
  * @author Gaëtan HERFRAY
  */
-public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder> {
+public class TasksAdapter extends ListAdapter<TaskUiState, TasksAdapter.TaskViewHolder> {
 
     /**
      * The listener for when a task needs to be deleted
@@ -56,7 +56,7 @@ public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder>
          *
          * @param task the task that needs to be deleted
          */
-        void onDeleteTask(Task task);
+        void onDeleteTask(TaskUiState task);
     }
 
     /**
@@ -101,8 +101,8 @@ public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder>
 
             imgDelete.setOnClickListener(view -> {
                 final Object tag = view.getTag();
-                if (tag instanceof Task) {
-                    deleteTaskListener.onDeleteTask((Task) tag);
+                if (tag instanceof TaskUiState) {
+                    deleteTaskListener.onDeleteTask((TaskUiState) tag);
                 }
             });
         }
@@ -112,31 +112,24 @@ public class TasksAdapter extends ListAdapter<Task, TasksAdapter.TaskViewHolder>
          *
          * @param task the task to bind in the item view
          */
-        void bind(Task task) {
+        void bind(TaskUiState task) {
 
-            lblTaskName.setText(task.getName());
+            lblTaskName.setText(task.getTaskName());
             imgDelete.setTag(task);
-
-            final Project taskProject = task.getProject();
-            if (taskProject != null) {
-                imgProject.setSupportImageTintList(ColorStateList.valueOf(taskProject.getColor()));
-                lblProjectName.setText(taskProject.getName());
-            } else {
-                imgProject.setVisibility(View.INVISIBLE);
-                lblProjectName.setText("");
-            }
+            imgProject.setSupportImageTintList(ColorStateList.valueOf(task.getProjectColor()));
+            lblProjectName.setText(task.getProjectName());
 
         }
     }
 
-    public static final DiffUtil.ItemCallback<Task> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<Task>() {
+    public static final DiffUtil.ItemCallback<TaskUiState> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<TaskUiState>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull Task oldTask, @NonNull Task newTask) {
-                    return oldTask.getId() == newTask.getId();
+                public boolean areItemsTheSame(@NonNull TaskUiState oldTask, @NonNull TaskUiState newTask) {
+                    return oldTask.getTaskId() == newTask.getTaskId();
                 }
                 @Override
-                public boolean areContentsTheSame(@NonNull Task oldTask, @NonNull Task newTask) {
+                public boolean areContentsTheSame(@NonNull TaskUiState oldTask, @NonNull TaskUiState newTask) {
                     return oldTask.equals(newTask);
                 }
             };

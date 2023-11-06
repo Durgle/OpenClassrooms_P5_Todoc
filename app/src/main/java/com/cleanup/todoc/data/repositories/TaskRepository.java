@@ -4,15 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.cleanup.todoc.data.database.dao.TaskDao;
+import com.cleanup.todoc.data.models.Project;
 import com.cleanup.todoc.data.models.Task;
+import com.cleanup.todoc.data.models.TaskWithProject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskRepository {
 
+    private final TaskDao mTaskDao;
     @NonNull
     private final MutableLiveData<List<Task>> mTasks = new MutableLiveData<>(new ArrayList<>());
+
+    public TaskRepository(TaskDao taskDao) {
+        mTaskDao = taskDao;
+    }
 
     /**
      * Get all existing {@link Task}
@@ -20,34 +28,32 @@ public class TaskRepository {
      * @return List of task
      */
     public LiveData<List<Task>> getAll() {
-        return mTasks;
+        return mTaskDao.getTasks();
+    }
+
+    /**
+     * Get all existing {@link Task} with her {@link Project} associated
+     *
+     * @return List of task
+     */
+    public LiveData<List<TaskWithProject>> getAllTasksWithProjects() {
+        return mTaskDao.getAllTasksWithProjects();
     }
 
     /**
      * Create new {@link Task}
      */
     public void create(@NonNull Task task) {
-        List<Task> currentTasks = mTasks.getValue();
-        if(currentTasks != null){
-            List<Task> newList = new ArrayList<>(currentTasks);
-            newList.add(task);
-            mTasks.setValue(newList);
-        }
+        mTaskDao.insertTask(task);
     }
 
     /**
      * Delete the given {@link Task}
      *
-     * @param task Task instance
+     * @param taskId Task unique identifier
      */
-    public void delete(Task task) {
-        List<Task> currentTasks = mTasks.getValue();
-        if (currentTasks != null) {
-            List<Task> newList = new ArrayList<>(currentTasks);
-            newList.remove(task);
-
-            mTasks.setValue(newList);
-        }
+    public void delete(long taskId) {
+        mTaskDao.deleteTaskById(taskId);
     }
 
 }

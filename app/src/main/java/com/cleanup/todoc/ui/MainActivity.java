@@ -24,6 +24,7 @@ import com.cleanup.todoc.data.models.Project;
 import com.cleanup.todoc.injection.ViewModelFactory;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
      * The RecyclerView which displays the list of tasks
      */
     // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
+    @SuppressWarnings("NotNullFieldNotInitialized")
     @NonNull
     private RecyclerView listTasks;
 
@@ -69,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
      * Task view model
      */
     private TaskViewModel mTaskViewModel;
+
+    /**
+     * Project list
+     */
+    private List<Project> mProjects;
 
     /**
      * The TextView displaying the empty state
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        mTaskViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(TaskViewModel.class);
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new TasksAdapter(task -> mTaskViewModel.deleteTask(task));
         mTaskViewModel.getTasks().observe(this, list -> {
             adapter.submitList(list);
-            if (list.size() == 0) {
+            if (list == null || list.size() == 0) {
                 lblNoTasks.setVisibility(View.VISIBLE);
                 listTasks.setVisibility(View.GONE);
             } else {
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 listTasks.setVisibility(View.VISIBLE);
             }
         });
+
+        mTaskViewModel.getProjects().observe(this, projects -> mProjects = projects);
 
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setAdapter(adapter);
@@ -148,11 +156,8 @@ public class MainActivity extends AppCompatActivity {
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-                // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
 
                 mTaskViewModel.addTask(
-                        id,
                         taskProject.getId(),
                         taskName,
                         new Date().getTime()
@@ -161,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
-            else{
+            else {
                 dialogInterface.dismiss();
             }
         }
@@ -232,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mTaskViewModel.getProjects());
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
