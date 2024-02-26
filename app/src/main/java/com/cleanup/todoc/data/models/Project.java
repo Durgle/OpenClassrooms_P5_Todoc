@@ -4,6 +4,7 @@ package com.cleanup.todoc.data.models;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
@@ -13,7 +14,10 @@ import java.util.Objects;
  *
  * @author Gaëtan HERFRAY
  */
-@Entity(tableName = "projects")
+@Entity(
+        tableName = "projects",
+        indices = {@Index(value = {"color"},unique = true)}
+)
 public class Project {
 
     /**

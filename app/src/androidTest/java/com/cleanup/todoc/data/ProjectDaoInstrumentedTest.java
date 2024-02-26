@@ -27,8 +27,8 @@ public class ProjectDaoInstrumentedTest extends DatabaseInstrumentedTest {
     public void get_all_project() throws InterruptedException {
 
         Project project1 = new Project(1, "Projet Test 1", 0xFCEADAD1);
-        Project project2 = new Project(2, "Projet Test 2", 0xFCEADAD1);
-        Project project3 = new Project(3, "Projet Test 3", 0xFCEADAD1);
+        Project project2 = new Project(2, "Projet Test 2", 0xFCEADAD2);
+        Project project3 = new Project(3, "Projet Test 3", 0xFCEADAD3);
 
         projectDao.insertProject(project1);
         projectDao.insertProject(project2);
